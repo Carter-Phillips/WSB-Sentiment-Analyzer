@@ -15,6 +15,8 @@ class Analyzer():
     def analyze(self, posts):
         sentiments = []
 
+        x = 0
+
         for post in posts:
             post, commentText = self.formatPost(post)
             postSentiment = self.threadpool.submit(self.getSentiment, post)
@@ -29,6 +31,8 @@ class Analyzer():
                     continue
 
             sentiments.append({'postSentiment': postSentiment.result(), 'commentSentiment': commentSentiment})
+            x = x+1
+            print('done post #', x)
 
         return sentiments
 
@@ -36,7 +40,6 @@ class Analyzer():
     @sleep_and_retry
     @limits(calls=CALLS, period=TIME_PERIOD)
     def getSentiment(self, text):
-
 
         document = language_v1.Document(content=text, type_=language_v1.Document.Type.PLAIN_TEXT)
         try:
